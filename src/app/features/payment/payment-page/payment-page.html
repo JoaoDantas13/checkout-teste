@@ -1,0 +1,66 @@
+<app-checkout-steps [current]="1" />
+
+<div class="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-8">
+  <header>
+    <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">Finalize sua assinatura</h1>
+    <p class="mt-1 text-sm text-muted">Falta só um passo para começar com o {{ store.product.name }}.</p>
+  </header>
+
+  @if (store.redirected()) {
+    <div class="mt-5 flex items-start gap-3 rounded-xl border border-brand-200 bg-brand-50 p-4 text-sm text-brand-700" role="status">
+      <app-icon name="info" [size]="18" class="mt-px" />
+      <p class="flex-1">
+        Não encontramos um pagamento recente para exibir. Revise seu pedido e finalize o pagamento abaixo.
+      </p>
+      <button type="button" class="text-brand-700/70 hover:text-brand-700" (click)="store.dismissRedirectNotice()" aria-label="Fechar aviso">
+        <app-icon name="close" [size]="16" />
+      </button>
+    </div>
+  }
+
+  <div class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+    <section class="card p-5 sm:p-6" aria-labelledby="payment-title">
+      @if (processing()) {
+        <app-processing-panel [product]="store.product" [amount]="store.total" [methodLabel]="attemptLabel()" />
+      } @else {
+        <h2 id="payment-title" class="text-base font-semibold">Como você quer pagar?</h2>
+
+        <app-method-selector class="mt-4 block" [selected]="method()" (changed)="selectMethod($event)" />
+
+        <div class="mt-6 border-t border-line pt-5">
+          @switch (method()) {
+            @case ('pix') {
+              @if (store.pixCharge(); as charge) {
+                <app-pix-panel
+                  [charge]="charge"
+                  [amount]="store.total"
+                  (conclude)="payWithPix()"
+                  (regenerate)="renewPix()"
+                />
+              }
+            }
+            @default {
+              <app-card-form
+                [method]="method() === 'debit' ? 'debit' : 'credit'"
+                [amount]="store.total"
+                [draft]="store.cardDraft()"
+                [disabled]="processing()"
+                (draftChange)="saveDraft($event)"
+                (submitted)="payWithCard($event)"
+              />
+              <p class="mt-5 rounded-lg bg-page px-3 py-2.5 text-[11px] leading-relaxed text-muted">
+                <span class="font-semibold text-ink">Ambiente de teste.</span>
+                Qualquer cartão válido é aprovado. Para simular falhas use
+                <span class="font-mono">4000 0000 0000 0002</span> (recusado),
+                <span class="font-mono">4000 0000 0000 9995</span> (sem limite) ou
+                <span class="font-mono">4000 0000 0000 0119</span> (instabilidade).
+              </p>
+            }
+          }
+        </div>
+      }
+    </section>
+
+    <app-order-summary class="order-first lg:order-none" [product]="store.product" [total]="store.total" />
+  </div>
+</div>

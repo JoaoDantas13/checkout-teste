@@ -1,0 +1,29 @@
+<div class="flex flex-col items-center py-4 text-center" role="status" aria-live="polite">
+  <span class="grid size-14 place-items-center rounded-full bg-brand-50">
+    <span class="size-7 animate-spin rounded-full border-[3px] border-brand-200 border-t-brand-600"></span>
+  </span>
+  <h2 class="mt-4 text-lg font-semibold">Processando seu pagamento</h2>
+  <p class="mt-1 max-w-xs text-sm text-muted">Estamos aguardando a confirmação. Isso pode levar alguns segundos.</p>
+</div>
+
+<div class="mt-4 border-t border-line pt-4">
+  <app-product-badge [product]="product()" />
+  <dl class="mt-4 space-y-2 text-sm">
+    <div class="flex justify-between gap-4">
+      <dt class="text-muted">Meio usado</dt>
+      <dd class="text-right font-medium">{{ methodLabel() }}</dd>
+    </div>
+    <div class="flex items-center justify-between">
+      <dt class="font-semibold">Total</dt>
+      <dd class="text-xl font-bold">{{ amount() | currency }}</dd>
+    </div>
+  </dl>
+</div>
+
+<div class="mt-4 flex items-start gap-2 rounded-lg bg-brand-50 p-3 text-xs text-brand-700">
+  <app-icon name="info" [size]="16" class="mt-px" />
+  <p>
+    <span class="block font-semibold">Aguarde a confirmação</span>
+    Não feche esta página nem envie o pagamento novamente.
+  </p>
+</div>

@@ -1,0 +1,29 @@
+<nav aria-label="Etapas do checkout" class="mx-auto max-w-6xl px-4 pt-6 sm:px-6">
+  <ol class="flex items-center gap-2 sm:gap-4">
+    @for (step of steps(); track step.label; let last = $last) {
+      <li class="flex items-center gap-2 text-xs font-medium" [class.flex-1]="!last" [attr.aria-current]="step.state === 'current' ? 'step' : null">
+        <span class="flex items-center gap-1.5 whitespace-nowrap"
+          [class.text-ink]="step.state !== 'upcoming'"
+          [class.text-muted]="step.state === 'upcoming'">
+          @switch (step.state) {
+            @case ('done') {
+              <span class="grid size-5 place-items-center rounded-full bg-emerald-50 text-emerald-600">
+                <app-icon name="check" [size]="12" [stroke]="2.6" />
+              </span>
+            }
+            @case ('current') {
+              <span class="grid size-5 place-items-center rounded-full bg-brand-600 text-[11px] text-white">{{ $index + 1 }}</span>
+            }
+            @default {
+              <span class="grid size-5 place-items-center rounded-full border border-line bg-white text-[11px]">{{ $index + 1 }}</span>
+            }
+          }
+          {{ step.label }}
+        </span>
+        @if (!last) {
+          <span class="h-px flex-1 bg-line" aria-hidden="true"></span>
+        }
+      </li>
+    }
+  </ol>
+</nav>

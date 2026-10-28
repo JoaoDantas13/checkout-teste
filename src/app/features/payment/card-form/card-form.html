@@ -1,0 +1,134 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate class="space-y-4" [attr.aria-busy]="disabled()">
+  <div class="flex items-center justify-between">
+    <h3 class="text-sm font-semibold">{{ title() }}</h3>
+    @if (brand() !== 'unknown') {
+      <span class="rounded-md bg-brand-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-brand-700 uppercase">
+        {{ brandLabel() }}
+      </span>
+    }
+  </div>
+
+  <div>
+    <label class="field-label" [for]="fieldIds.number">Número do cartão</label>
+    <div class="field" [class.field-invalid]="hasError('number')">
+      <app-icon name="card" class="text-muted" [size]="16" />
+      <input
+        [id]="fieldIds.number"
+        formControlName="number"
+        type="text"
+        inputmode="numeric"
+        autocomplete="cc-number"
+        placeholder="0000 0000 0000 0000"
+        [attr.aria-invalid]="hasError('number')"
+        [attr.aria-describedby]="hasError('number') ? fieldIds.number + '-error' : null"
+        (input)="mask('number')"
+      />
+      @if (hasError('number')) {
+        <app-icon name="alert" class="text-red-500" [size]="16" />
+      }
+    </div>
+    @if (hasError('number')) {
+      <p class="field-error" [id]="fieldIds.number + '-error'">{{ errorMessage('number') }}</p>
+    }
+  </div>
+
+  <div>
+    <label class="field-label" [for]="fieldIds.holder">Nome no cartão</label>
+    <div class="field" [class.field-invalid]="hasError('holder')">
+      <input
+        [id]="fieldIds.holder"
+        formControlName="holder"
+        type="text"
+        autocomplete="cc-name"
+        autocapitalize="characters"
+        spellcheck="false"
+        placeholder="Nome completo"
+        maxlength="40"
+        [attr.aria-invalid]="hasError('holder')"
+        [attr.aria-describedby]="hasError('holder') ? fieldIds.holder + '-error' : null"
+        (input)="mask('holder')"
+      />
+      @if (hasError('holder')) {
+        <app-icon name="alert" class="text-red-500" [size]="16" />
+      }
+    </div>
+    @if (hasError('holder')) {
+      <p class="field-error" [id]="fieldIds.holder + '-error'">{{ errorMessage('holder') }}</p>
+    }
+  </div>
+
+  <div class="grid grid-cols-2 gap-3">
+    <div>
+      <label class="field-label" [for]="fieldIds.expiry">Validade</label>
+      <div class="field" [class.field-invalid]="hasError('expiry')">
+        <input
+          [id]="fieldIds.expiry"
+          formControlName="expiry"
+          type="text"
+          inputmode="numeric"
+          autocomplete="cc-exp"
+          placeholder="MM/AA"
+          [attr.aria-invalid]="hasError('expiry')"
+          [attr.aria-describedby]="hasError('expiry') ? fieldIds.expiry + '-error' : null"
+          (input)="mask('expiry')"
+        />
+        @if (hasError('expiry')) {
+          <app-icon name="alert" class="text-red-500" [size]="16" />
+        }
+      </div>
+      @if (hasError('expiry')) {
+        <p class="field-error" [id]="fieldIds.expiry + '-error'">{{ errorMessage('expiry') }}</p>
+      }
+    </div>
+
+    <div>
+      <label class="field-label" [for]="fieldIds.cvv">CVV</label>
+      <div class="field" [class.field-invalid]="hasError('cvv')">
+        <app-icon name="lock" class="text-muted" [size]="15" />
+        <input
+          [id]="fieldIds.cvv"
+          formControlName="cvv"
+          type="password"
+          inputmode="numeric"
+          autocomplete="cc-csc"
+          [attr.maxlength]="cvvSize()"
+          [placeholder]="cvvSize() === 4 ? '••••' : '•••'"
+          [attr.aria-invalid]="hasError('cvv')"
+          [attr.aria-describedby]="hasError('cvv') ? fieldIds.cvv + '-error' : fieldIds.cvv + '-hint'"
+          (input)="mask('cvv')"
+        />
+        @if (hasError('cvv')) {
+          <app-icon name="alert" class="text-red-500" [size]="16" />
+        }
+      </div>
+      @if (hasError('cvv')) {
+        <p class="field-error" [id]="fieldIds.cvv + '-error'">{{ errorMessage('cvv') }}</p>
+      } @else {
+        <p class="sr-only" [id]="fieldIds.cvv + '-hint'">Código de {{ cvvSize() }} dígitos no verso do cartão.</p>
+      }
+    </div>
+  </div>
+
+  @if (isValid()) {
+    <p class="flex items-center gap-1.5 text-xs font-medium text-emerald-600" role="status">
+      <app-icon name="checkCircle" [size]="15" />
+      Dados do cartão preenchidos
+    </p>
+  }
+
+  <button type="submit" class="btn-primary w-full" [class.opacity-70]="showBlocked()" [disabled]="disabled()">
+    <app-icon name="lock" [size]="16" />
+    Pagar {{ amount() | currency }}
+  </button>
+
+  @if (showBlocked()) {
+    <p class="text-center text-xs text-red-600" role="alert">Corrija os campos destacados para continuar.</p>
+  } @else {
+    <p class="text-center text-[11px] leading-relaxed text-muted">
+      Ao continuar, você concorda com os
+      <a href="#" class="text-brand-600 hover:underline">Termos de uso</a>
+      e a
+      <a href="#" class="text-brand-600 hover:underline">Política de privacidade</a>.
+    </p>
+  }
+</form>

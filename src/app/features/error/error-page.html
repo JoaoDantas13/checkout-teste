@@ -1,0 +1,51 @@
+<app-checkout-steps [current]="1" />
+
+@if (failure(); as failure) {
+  <div class="mx-auto max-w-xl px-4 pt-6 sm:px-6 sm:pt-10">
+    <section class="card px-5 py-8 text-center sm:px-10" aria-labelledby="error-title">
+      <span class="mx-auto grid size-14 place-items-center rounded-full bg-red-50 text-red-500">
+        <app-icon name="alert" [size]="28" />
+      </span>
+      <h1 id="error-title" class="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
+        Não foi possível concluir o pagamento
+      </h1>
+      <p class="mx-auto mt-2 max-w-sm text-sm text-muted">
+        Não se preocupe: nenhuma cobrança foi realizada e seu pedido continua reservado.
+      </p>
+
+      <div class="mt-6 flex items-start gap-3 rounded-xl border border-red-100 bg-red-50 p-4 text-left" role="alert">
+        <app-icon name="alert" [size]="18" class="mt-px text-red-500" />
+        <div>
+          <p class="text-sm font-semibold text-red-700">{{ failure.title }}</p>
+          <p class="mt-0.5 text-xs leading-relaxed text-red-600">{{ failure.message }}</p>
+        </div>
+      </div>
+
+      <app-order-details
+        class="mt-5 text-left"
+        [product]="store.product"
+        [rows]="rows()"
+        [total]="store.total"
+        totalLabel="Total a pagar"
+      />
+
+      <div class="mt-6 grid gap-3 sm:grid-cols-2">
+        <button type="button" class="btn-primary" (click)="retry()">
+          <app-icon name="refresh" [size]="16" />
+          Tentar novamente
+        </button>
+        <button type="button" class="btn-secondary" (click)="chooseAnother()">
+          Escolher outro meio
+        </button>
+      </div>
+      <p class="mt-3 text-xs text-muted">{{ failure.hint }}</p>
+    </section>
+
+    <p class="mt-6 text-center">
+      <a href="#" class="inline-flex items-center gap-1.5 text-xs font-medium text-brand-600 hover:underline">
+        <app-icon name="chat" [size]="14" />
+        Ainda precisa de ajuda? Fale com a gente
+      </a>
+    </p>
+  </div>
+}

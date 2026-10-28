@@ -1,0 +1,63 @@
+<div class="space-y-4">
+  <div>
+    <h3 class="text-sm font-semibold">Pague com seu app do banco</h3>
+    <p class="mt-1 text-xs leading-relaxed text-muted">
+      Abra a opção Pix e escaneie o QR Code ou use o código abaixo. Depois, conclua o pagamento.
+    </p>
+  </div>
+
+  <div class="flex flex-col items-center gap-2">
+    <div class="grid size-48 place-items-center rounded-xl border border-line bg-white p-2" [class.opacity-30]="expired()">
+      @if (qrCode(); as src) {
+        <img [src]="src" width="176" height="176" alt="QR Code Pix simulado para pagamento de {{ amount() | currency }}" />
+      } @else {
+        <span class="size-6 animate-spin rounded-full border-2 border-brand-200 border-t-brand-600"></span>
+      }
+    </div>
+    <p class="text-[11px] text-muted">QR Code simulado · sem valor de pagamento</p>
+    <p
+      class="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium"
+      [class]="expired() ? 'bg-red-50 text-red-600' : 'bg-brand-50 text-brand-700'"
+      role="timer"
+      aria-live="off"
+    >
+      <app-icon name="clock" [size]="13" />
+      @if (expired()) {
+        Código expirado
+      } @else {
+        Expira em {{ remaining() }}
+      }
+    </p>
+  </div>
+
+  <div>
+    <label class="field-label" for="pix-code">Pix copia e cola</label>
+    <div class="field">
+      <input id="pix-code" type="text" readonly [value]="charge().payload" class="truncate text-xs text-muted" (focus)="selectAll($event)" />
+      <button type="button" class="text-brand-600 hover:text-brand-700" (click)="copy()" aria-label="Copiar código Pix">
+        <app-icon name="copy" [size]="16" />
+      </button>
+    </div>
+  </div>
+
+  <button type="button" class="btn-secondary w-full" (click)="copy()" [disabled]="disabled()">
+    <app-icon [name]="copied() ? 'check' : 'copy'" [size]="16" />
+    {{ copied() ? 'Código copiado' : 'Copiar código Pix' }}
+  </button>
+  <span class="sr-only" aria-live="polite">{{ copied() ? 'Código Pix copiado para a área de transferência.' : '' }}</span>
+
+  @if (expired()) {
+    <div class="flex items-start gap-2 rounded-lg bg-amber-50 p-3 text-xs text-amber-800" role="status">
+      <app-icon name="info" [size]="16" class="mt-px" />
+      <p>
+        Este código expirou. Gere um novo para continuar; o anterior não pode mais ser pago.
+        <button type="button" class="font-semibold underline" (click)="regenerate.emit()">Gerar novo código</button>
+      </p>
+    </div>
+  }
+
+  <button type="button" class="btn-primary w-full" (click)="conclude.emit()" [disabled]="disabled()">
+    <app-icon name="arrowRight" [size]="16" />
+    Concluir pagamento
+  </button>
+</div>

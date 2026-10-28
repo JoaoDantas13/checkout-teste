@@ -1,0 +1,41 @@
+<section class="card p-5" aria-labelledby="summary-title">
+  <h2 id="summary-title" class="text-sm font-semibold">Resumo do pedido</h2>
+
+  <app-product-badge class="mt-4" [product]="product()" />
+  <p class="mt-3 text-xs leading-relaxed text-muted">{{ product().summary }}</p>
+
+  <ul class="mt-4 hidden space-y-2 text-xs text-ink lg:block">
+    @for (feature of product().features; track feature) {
+      <li class="flex items-center gap-2">
+        <app-icon name="check" class="text-emerald-600" [size]="14" [stroke]="2.4" />
+        {{ feature }}
+      </li>
+    }
+  </ul>
+
+  <dl class="mt-4 space-y-2 border-t border-line pt-4 text-sm">
+    <div class="flex justify-between">
+      <dt class="text-muted">Subtotal</dt>
+      <dd class="font-medium">{{ product().price | currency }}</dd>
+    </div>
+    <div class="flex justify-between">
+      <dt class="text-muted">Taxas</dt>
+      <dd class="font-medium">{{ product().fees | currency }}</dd>
+    </div>
+  </dl>
+
+  <div class="mt-4 flex items-center justify-between border-t border-line pt-4">
+    <span class="text-sm font-semibold">Total hoje</span>
+    <span class="text-2xl font-bold tracking-tight">{{ total() | currency }}</span>
+  </div>
+
+  <p class="mt-3 text-xs leading-relaxed text-muted">{{ product().renewalNote }}</p>
+</section>
+
+<div class="mt-4 hidden items-start gap-3 px-1 lg:flex">
+  <app-icon name="shield" class="mt-0.5 text-brand-600" [size]="20" />
+  <p class="text-xs leading-relaxed text-muted">
+    <span class="block font-semibold text-ink">Seus dados estão protegidos</span>
+    Pagamento criptografado. Não armazenamos os dados do seu cartão.
+  </p>
+</div>
